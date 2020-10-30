@@ -5,6 +5,9 @@ authors = ["marc yeo <m@marc.rs>"]
 repository = "https://github.com/marc1/opal"
 edition = "2018"
 
+[dependencies]
+snafu = "0.6.9"
+
 [dependencies.clap]
 version = "3.0.0-beta.2"
 
