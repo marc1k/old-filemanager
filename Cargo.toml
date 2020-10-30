@@ -1,0 +1,13 @@
+[package]
+name = "opal"
+version = "0.1.0"
+authors = ["marc yeo <m@marc.rs>"]
+repository = "https://github.com/marc1/opal"
+edition = "2018"
+
+[dependencies.clap]
+version = "3.0.0-beta.2"
+
+[dependencies.tokio]
+version = "0.3"
+features = ["rt-multi-thread", "stream", "io-std", "sync", "macros", "fs", "time"] 
