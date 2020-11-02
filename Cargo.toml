@@ -5,11 +5,16 @@ authors = ["marc yeo <m@marc.rs>"]
 repository = "https://github.com/marc1/opal"
 edition = "2018"
 
+[profile.release]
+debug = true
+
 [dependencies]
 snafu = "0.6.9"
+clap = "3.0.0-beta.2"
 
-[dependencies.clap]
-version = "3.0.0-beta.2"
+[dependencies.crossterm]
+version = "0.18.0"
+features = ["event-stream"]
 
 [dependencies.tokio]
 version = "0.3"

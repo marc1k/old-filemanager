@@ -1,15 +1,19 @@
 use {
     super::{
-        Bounds,
+        Region,
         Cell,
+        Position,
+        Dimension
     },
     std::{
-        ops::{ Index, Sub }
+        borrow::Borrow,
+        fmt::{ self, Debug, Formatter },
+        ops::{ Index, IndexMut }
     }
 };
 
 pub struct Buffer {
-    pub bounds: Bounds,
+    pub region: Region,
 
     /// `Cell`s in contiguous representation
     /// Boxed slice to discourage easy length mutation 
@@ -17,27 +21,66 @@ pub struct Buffer {
 }
 
 impl Buffer {
-    /// Initializes a blank buffer
-    pub fn blank(bounds: Bounds) -> Self {
-        let len = bounds.width() * bounds.height();
-        let content = vec![Cell::default(); len as usize].into_boxed_slice();
+    /// Constructs a `Buffer` with a specified `Region`, filled with a specified `Cell`
+    pub fn filled<C: Borrow<Cell>>(region: Region, cell: C) -> Self {
+        let content = vec![cell.borrow().clone(); region.area() as usize]
+            .into_boxed_slice();
 
         Self {
-            bounds,
+            region,
             content
         }
     }
-}
 
-/// Returns a `[Cell]` which can be indexed into (allows n-dimensional array syntax, i.e. `buf[i][j]`)
-impl Index<u16> for Buffer {
-    type Output = [Cell];
+    /// Constructs a blank `Buffer`
+    pub fn blank(region: Region) -> Self {
+        Buffer::filled(region, Cell::default())
+    }
 
-    fn index(&self, row: u16) -> &Self::Output {     
-        // Starting index of row 
-        let idx = (self.bounds.width() * row) as usize;
+    pub fn iter(&self) -> impl Iterator<Item = (Position, &Cell) > {
+        self.region.iter().zip(self.content.iter())         
+    }
 
-        &self.content[idx .. (idx + self.bounds.width() as usize)]
+    pub fn row(&self, row: u16) -> &[Cell] {
+        let row_flat = (self.region.width() * row) as usize;
+
+        &self.content[row_flat .. (row_flat + self.region.width() as usize)]
+    }
+
+    pub fn row_mut(&mut self, row: u16) -> &mut [Cell] {
+        let row_flat = (self.region.width() * row) as usize;
+
+        &mut self.content[row_flat .. (row_flat + self.region.width() as usize)]
     }
 }
 
+impl Index<[u16; 2]> for Buffer {
+    type Output = Cell;
+
+    fn index(&self, idx: [u16; 2]) -> &Self::Output {     
+        let [col, row] = idx;
+
+        &self.row(row)[col as usize]
+    }
+}
+
+impl IndexMut<[u16; 2]> for Buffer {
+    fn index_mut(&mut self, idx: [u16; 2]) -> &mut Self::Output {     
+        let [col, row] = idx;
+
+        &mut self.row_mut(row)[col as usize]
+    }
+}
+
+impl Debug for Buffer {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {     
+        for row in 0..self.region.height() {
+            for col in 0..self.region.width() {
+                write!(f, "{}    ", self[[col, row]])?;
+            }
+            write!(f, "\n\n")?;
+        }
+
+        Ok(())
+    }
+}
