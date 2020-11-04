@@ -13,4 +13,5 @@ path = "crates/bin/opal.rs"
 members = ["crates/viewport"]
 
 [dependencies]
+viewport = { path = "crates/viewport" }
 

@@ -3,12 +3,7 @@ mod buffer;
 mod cell;
 mod error;
 
-pub use {
-    bounds::Bounds,
-    buffer::Buffer,
-    cell::Cell,
-    error::Error
-};
+pub use {bounds::Bounds, buffer::Buffer, cell::Cell, error::Error};
 
 pub type Result<T, E = error::Error> = std::result::Result<T, E>;
 

@@ -1,52 +1,90 @@
 use {
-    crate::{
-        Result,
-        Error,
-        Bounds,
-        Cell,
-    },
-    std::ops::Sub,
+    crate::{ensure, Bounds, Cell, Error, Result},
+    std::{collections::HashSet, ops::Sub},
 };
 
 pub struct Buffer {
     inner: Box<[Cell]>,
-    bounds: Bounds
+    bounds: Bounds,
 }
 
 impl Buffer {
     pub fn filled_with(fill: Cell, bounds: Bounds) -> Self {
-        let inner = vec![fill; (bounds.width * bounds.height) as usize].into_boxed_slice();
+        let inner = vec![fill; (bounds.width * bounds.height) as usize]
+            .into_boxed_slice();
 
-        Self {
-            inner,
-            bounds
-        }
+        Self { inner, bounds }
     }
 
     pub fn blank(bounds: Bounds) -> Self {
         Self::filled_with(Cell::default(), bounds)
     }
 
-    fn index_of(&self, col: u16, row: u16) -> Result<usize> {
-        if col >= self.bounds.width || row >= self.bounds.height {
-            return Err(Error::OutOfBounds(col, row, self.bounds.clone()));
-        }
-
-        let idx = (row * self.bounds.width) + col;
-
-        Ok(idx as usize)
-    }
-
     // Indexing (col, row) as per (x, y) convention
     pub fn at_mut(&mut self, col: u16, row: u16) -> Result<&mut Cell> {
-        Ok(&mut self.inner[self.index_of(col, row)?])
+        Ok(&mut self.inner[self.bounds.index_of(col, row)?])
     }
 
     // Indexing (col, row) as per (x, y) convention
     pub fn at(&self, col: u16, row: u16) -> Result<&Cell> {
-        Ok(&self.inner[self.index_of(col, row)?])
+        Ok(&self.inner[self.bounds.index_of(col, row)?])
+    }
+
+    /// An `Iterator` over each coordinate within the `Buffer` and a mutable
+    /// reference to the corresponding `Cell`.
+    pub fn iter_mut(
+        &mut self,
+    ) -> impl Iterator<Item = ((u16, u16), &mut Cell)> {
+        self.bounds.iter().zip(self.inner.iter_mut())
+    }
+
+    /// An `Iterator` over each coordinate within the `Buffer` and an immutable
+    /// reference to the corresponding `Cell`.
+    pub fn iter(&self) -> impl Iterator<Item = ((u16, u16), &Cell)> {
+        self.bounds.iter().zip(self.inner.iter())
+    }
+
+    /// An `Iterator` over each coordinate within the smaller specified `Buffer`
+    /// AND the current `Buffer`, and a mutable reference to the corresponding `Cell`.
+    ///
+    /// Any overflow is elided. If the specified `Bounds` are completely
+    /// overflowed, the `Iterator` returned will be empty.
+    pub fn iter_bounds_mut<'b>(
+        &'b mut self,
+        bounds: &'b mut Bounds,
+    ) -> impl Iterator<Item = ((u16, u16), &'b mut Cell)> + 'b {
+        let (left, top) = (bounds.x, bounds.y);
+
+        // Set of coordinates relative in the specified `Bounds` to this `Buffer`'s `Bounds`.
+        let coords: HashSet<_> = bounds
+            .iter()
+            .map(move |(col, row)| (col + left, row + top))
+            .collect();
+
+        self.iter_mut()
+            .filter(move |(c, _)| coords.contains(c))
+            .into_iter()
+    }
+
+    /// An `Iterator` over each coordinate within the smaller specified `Buffer`
+    /// AND the current `Buffer`, and an immutable reference to the corresponding `Cell`.
+    ///
+    /// Any overflow is elided. If the specified `Bounds` are completely
+    /// overflowed, the `Iterator` returned will be empty.
+    pub fn iter_bounds<'b>(
+        &'b self,
+        bounds: &'b Bounds,
+    ) -> impl Iterator<Item = ((u16, u16), &'b Cell)> + 'b {
+        let (left, top) = (bounds.x, bounds.y);
+
+        // Set of coordinates relative in the specified `Bounds` to this `Buffer`'s `Bounds`.
+        let coords: HashSet<_> = bounds
+            .iter()
+            .map(move |(col, row)| (col + left, row + top))
+            .collect();
+
+        self.iter()
+            .filter(move |(c, _)| coords.contains(c))
+            .into_iter()
     }
 }
-
-
-

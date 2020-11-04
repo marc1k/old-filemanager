@@ -1,12 +1,12 @@
 #[derive(Debug, Clone)]
 pub struct Cell {
-    pub content: String
+    pub content: String,
 }
 
 impl Default for Cell {
-    fn default() -> Self {     
+    fn default() -> Self {
         Self {
-            content: ' '.to_string()
+            content: ' '.to_string(),
         }
     }
 }
