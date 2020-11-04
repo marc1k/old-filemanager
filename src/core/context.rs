@@ -12,7 +12,7 @@ use {
     },
 };
 
-/// Validated user-specified launch context
+/// Validated user-specified launch context.
 pub struct Context {
     root: PathBuf
 }
@@ -20,7 +20,7 @@ pub struct Context {
 impl TryFrom<RawArgs> for Context {
     type Error = crate::Error;
 
-    /// Attempts to construct `Context` from unvalidated launch arguments
+    /// Attempts to construct `Context` from unvalidated launch arguments.
     fn try_from(mut args: RawArgs) -> Result<Self> {     
         match args.path {
             Some(path) => {

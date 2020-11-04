@@ -8,7 +8,7 @@ use {
     },
 };
 
-/// Raw, unvalidated launch arguments parsed from command line
+/// Raw, unvalidated launch arguments parsed from command line.
 #[derive(Debug, Clap)]
 #[clap(
     name = "opal",
@@ -17,7 +17,7 @@ use {
     author = crate_authors!(),
 )]
 pub struct RawArgs {
-    /// The path to open
+    /// The path to open.
     #[clap(name = "PATH", index = 1, parse(from_os_str))]
     pub path: Option<PathBuf>
 }

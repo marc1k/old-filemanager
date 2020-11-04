@@ -10,9 +10,6 @@ pub use {
     viewport::Viewport,
 };
 
-/// The writer used to write to the terminal buffer
-pub type W = std::io::BufWriter<std::io::Stderr>;
-
 use std::convert::From;
 
 #[derive(Debug, Clone)]
@@ -31,12 +28,12 @@ impl From<(u16, u16)> for Position {
 }
 
 #[derive(Debug, Clone)]
-pub struct Dimension {
+pub struct Dimensions {
     pub width: u16,
     pub height: u16
 }
 
-impl From<(u16, u16)> for Dimension {
+impl From<(u16, u16)> for Dimensions {
     fn from(pair: (u16, u16)) -> Self {     
         Self {
             width: pair.0,

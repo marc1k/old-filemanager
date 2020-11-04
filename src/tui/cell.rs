@@ -12,16 +12,16 @@ use {
     }
 };
 
-/// A cell of a buffer that can contain exactly one `char`
+/// A cell of a buffer that can contain exactly one `char`.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Cell {
-    /// Content of the cell
+    /// Content of the cell.
     pub content: char,
 
-    /// Foreground color
+    /// Foreground color.
     fg: Color,
 
-    /// Background color
+    /// Background color.
     bg: Color,
 
 }

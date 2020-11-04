@@ -1,6 +1,6 @@
 use {
     super::{
-        W,
+        Position,
         Buffer,
         Cell,
         Region
@@ -23,12 +23,12 @@ use {
     }
 };
 
-pub struct Viewport {
+pub struct Viewport<W> where W: Write {
     buffer: Buffer,
     pub writer: W,
 }
 
-impl Viewport {
+impl<W: Write> Viewport<W> {
     pub fn new(region: Region, writer: W) -> Self {
         Self {
             buffer: Buffer::filled(region, Cell::new('x')),
@@ -37,15 +37,26 @@ impl Viewport {
     }
 
     pub fn draw(&mut self) {
+        let w = &mut self.writer;
+
+        let mut last: Option<Position> = None;
+
         for (pos, cell) in self.buffer.iter() {
-            self.writer.queue(MoveTo(pos.col, pos.row)).unwrap();
-            self.writer.queue(Print(cell)).unwrap();
+            if let Some(last) = last {
+                if !(pos.col == last.col + 1 && pos.row == last.row) {
+                    w.queue(MoveTo(pos.col, pos.row)).unwrap();
+                }
+            }
+
+            last = Some(pos.clone());
+
+            w.queue(Print(cell)).unwrap();
         }
 
-        self.writer.flush().unwrap();
+        w.flush().unwrap();
     }
 
-    pub fn init(&mut self) -> Result<()> {
+    pub fn init_buffer(&mut self) -> Result<()> {
         enable_raw_mode()?;
         self.writer.queue(EnterAlternateScreen)?;
         self.writer.queue(cursor::Hide)?;
@@ -57,7 +68,7 @@ impl Viewport {
         Ok(())
     }
 
-    pub fn release(&mut self) -> Result<()> {
+    pub fn release_buffer(&mut self) -> Result<()> {
         self.writer.queue(cursor::EnableBlinking)?;
         self.writer.queue(cursor::Show)?;
         self.writer.queue(LeaveAlternateScreen)?;

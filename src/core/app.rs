@@ -3,25 +3,15 @@ use {
         Result,
         tui::{
             Position,
-            Dimension,
+            Dimensions,
             Buffer,
             Cell,
             Region,
             Viewport,
         }
     },
-    super::{
-        Context
-    },
+    super::Context,
     std::io::Write,
-    crossterm::{
-        terminal::{
-            enable_raw_mode, disable_raw_mode,
-            EnterAlternateScreen, LeaveAlternateScreen,
-            Clear, ClearType
-        },
-        QueueableCommand,
-    },
 };
 
 pub struct App {
@@ -29,7 +19,7 @@ pub struct App {
 }
 
 impl App {
-    /// Constructs an `App` within the specified context
+    /// Constructs an `App` within the specified context.
     pub fn with_context(context: Context) -> Self {
         Self {
             context
@@ -37,21 +27,24 @@ impl App {
     }
 
     pub async fn run(&self) -> Result<()> {
-        let dim = Dimension::from(crossterm::terminal::size().unwrap());
-        //let dim = Dimension::from((80, 24));
-        let writer = std::io::BufWriter::new(std::io::stderr());
+        let err = std::io::stderr();
+        let writer = std::io::BufWriter::new(err.lock());
+
+        let dim = Dimensions::from(crossterm::terminal::size().unwrap());
 
         let mut viewport = Viewport::new(Region::new(dim.width, dim.height), writer);
 
-        viewport.init().unwrap();
+        viewport.init_buffer().unwrap();
 
-        tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+        tokio::time::sleep(std::time::Duration::from_secs(1)).await;
 
-        viewport.draw();
+        for _ in 0..10 {
+            viewport.draw();
+        }
 
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
 
-        viewport.release().unwrap();
+        viewport.release_buffer().unwrap();
         
         Ok(())
     }
