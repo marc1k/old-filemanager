@@ -26,7 +26,7 @@ impl Bounds {
         self
     }
 
-    /// The index of the coordinate at (col, row) in the `Bounds`.
+    /// The index of the coordinate at (col, row) in the `Bounds` relative to itself.
     pub fn index_of(&self, col: u16, row: u16) -> Result<usize> {
         ensure!(
             col < self.width && row < self.height,
@@ -38,10 +38,18 @@ impl Bounds {
         Ok(idx as usize)
     }
 
-    /// An `Iterator` over each possible coordinate within the `Bounds` in form (col, row).
+    /// An `Iterator` over each possible coordinate within the `Bounds` in form `(col, row)`
+    /// relative to itself.
+    pub fn iter_interior(&self) -> impl Iterator<Item = (u16, u16)> + '_ {
+        (0..self.height)
+            .flat_map(move |row| (0..self.width).map(move |col| (col, row)))
+    }
+
+    /// An `Iterator` over each possible coordinate of the `Bounds` relative to its
+    /// environment.
     pub fn iter(&self) -> impl Iterator<Item = (u16, u16)> + '_ {
-        (0..self.height).flat_map(move |row| {
-            (0..self.width).into_iter().map(move |col| (col, row))
+        (self.y..self.y + self.height).flat_map(move |row| {
+            (self.x..self.x + self.width).map(move |col| (col, row))
         })
     }
 }

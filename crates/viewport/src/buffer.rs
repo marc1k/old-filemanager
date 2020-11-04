@@ -1,11 +1,24 @@
 use {
-    crate::{ensure, Bounds, Cell, Error, Result},
-    std::{collections::HashSet, ops::Sub},
+    crate::{Bounds, Cell, Result},
+    std::collections::HashSet,
 };
 
 pub struct Buffer {
     inner: Box<[Cell]>,
     bounds: Bounds,
+}
+
+impl std::fmt::Display for Buffer {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        for row in 0..self.bounds.height {
+            for col in 0..self.bounds.width {
+                write!(f, "{}    ", self.at(col, row).unwrap()).unwrap();
+            }
+            write!(f, "\n\n").unwrap();
+        }
+
+        Ok(())
+    }
 }
 
 impl Buffer {
@@ -35,56 +48,53 @@ impl Buffer {
     pub fn iter_mut(
         &mut self,
     ) -> impl Iterator<Item = ((u16, u16), &mut Cell)> {
-        self.bounds.iter().zip(self.inner.iter_mut())
+        self.bounds.iter_interior().zip(self.inner.iter_mut())
     }
 
     /// An `Iterator` over each coordinate within the `Buffer` and an immutable
     /// reference to the corresponding `Cell`.
     pub fn iter(&self) -> impl Iterator<Item = ((u16, u16), &Cell)> {
-        self.bounds.iter().zip(self.inner.iter())
+        self.bounds.iter_interior().zip(self.inner.iter())
     }
 
-    /// An `Iterator` over each coordinate within the smaller specified `Buffer`
-    /// AND the current `Buffer`, and a mutable reference to the corresponding `Cell`.
+    /// An `Iterator` over each coordinate in the intersection of the smaller specified `Buffer`
+    /// and the current `Buffer`, and a mutable reference to the corresponding `Cell`.
+    ///
+    /// This can be thought of as narrowing the "scope" of the `Buffer` temporarily.
     ///
     /// Any overflow is elided. If the specified `Bounds` are completely
     /// overflowed, the `Iterator` returned will be empty.
-    pub fn iter_bounds_mut<'b>(
+    pub fn iter_intersect_mut<'b>(
         &'b mut self,
-        bounds: &'b mut Bounds,
+        bounds: &'b Bounds,
     ) -> impl Iterator<Item = ((u16, u16), &'b mut Cell)> + 'b {
-        let (left, top) = (bounds.x, bounds.y);
-
         // Set of coordinates relative in the specified `Bounds` to this `Buffer`'s `Bounds`.
-        let coords: HashSet<_> = bounds
-            .iter()
-            .map(move |(col, row)| (col + left, row + top))
-            .collect();
+        let coords: HashSet<_> = bounds.iter().collect();
 
         self.iter_mut()
-            .filter(move |(c, _)| coords.contains(c))
+            .filter(move |(p, _)| coords.contains(p))
             .into_iter()
     }
 
-    /// An `Iterator` over each coordinate within the smaller specified `Buffer`
-    /// AND the current `Buffer`, and an immutable reference to the corresponding `Cell`.
+    /// An `Iterator` over each coordinate in the intersection of the smaller specified `Buffer`
+    /// and the current `Buffer`, and an immutable reference to the corresponding `Cell`.
+    ///
+    /// This can be thought of as narrowing the "scope" of the `Buffer` temporarily.
     ///
     /// Any overflow is elided. If the specified `Bounds` are completely
     /// overflowed, the `Iterator` returned will be empty.
-    pub fn iter_bounds<'b>(
+    pub fn iter_intersect<'b>(
         &'b self,
         bounds: &'b Bounds,
     ) -> impl Iterator<Item = ((u16, u16), &'b Cell)> + 'b {
-        let (left, top) = (bounds.x, bounds.y);
-
-        // Set of coordinates relative in the specified `Bounds` to this `Buffer`'s `Bounds`.
-        let coords: HashSet<_> = bounds
-            .iter()
-            .map(move |(col, row)| (col + left, row + top))
-            .collect();
+        // Set of coordinates in the specified `Bounds` relative to the current `Buffer`'s `Bounds`.
+        let coords: HashSet<_> = bounds.iter().collect();
 
         self.iter()
-            .filter(move |(c, _)| coords.contains(c))
+            .filter(move |(p, _)| coords.contains(p))
             .into_iter()
     }
+
+    /*pub fn diff(&self, other: Self) -> impl Iterator<Item = ((u16, u16), &Cell)> {
+    }*/
 }

@@ -10,8 +10,8 @@ name = "opal"
 path = "crates/bin/opal.rs"
 
 [workspace]
-members = ["crates/viewport"]
+members = ["crates/lib", "crates/viewport"]
 
 [dependencies]
-viewport = { path = "crates/viewport" }
+opal-lib = { path = "crates/lib" }
 

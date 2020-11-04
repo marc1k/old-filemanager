@@ -1,0 +1,9 @@
+[package]
+name = "opal-lib"
+version = "0.1.0"
+authors = ["marc1 <m@marc.rs>"]
+edition = "2018"
+license = "MIT"
+
+[dependencies]
+viewport = { path = "../viewport" }
