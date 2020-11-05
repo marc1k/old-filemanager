@@ -5,6 +5,8 @@ use crate::{
     Position, Size 
 };
 
+/// A definition of some area on the screen, with an origin `Position` and a `Size` (i.e.
+/// dimensions).
 #[derive(Debug, Clone)]
 pub struct Bounds {
     pub origin: Position,
@@ -27,14 +29,14 @@ impl Bounds {
         self
     }
 
-    /// Returns the index the `Position` is at `(col, row)` when flattened.
-    pub fn index_of(&self, col: u16, row: u16) -> Result<usize> {
+    /// Returns the index the `Position` is at when flattened.
+    pub fn index_of(&self, pos: Position) -> Result<usize> {
         ensure!(
-            col < self.dim.width() && row < self.dim.height(),
-            Error::OutOfBounds(col, row, self.clone())
+            pos.x() < self.dim.width() && pos.y() < self.dim.height(),
+            Error::OutOfBounds(pos.y(), pos.x(), self.clone())
         );
 
-        let n = (row * self.dim.width()) + col;
+        let n = (pos.y() * self.dim.width()) + pos.x();
 
         Ok(n as usize)
     }
