@@ -1,55 +1,47 @@
-use crate::{ensure, Error, Result};
+use crate::{ 
+    Result,
+    Error,
+    ensure,
+    Position, Size 
+};
 
 #[derive(Debug, Clone)]
 pub struct Bounds {
-    pub x: u16,
-    pub y: u16,
-    pub width: u16,
-    pub height: u16,
+    pub origin: Position,
+    pub dim: Size
 }
 
 impl Bounds {
-    pub fn of(width: u16, height: u16) -> Self {
+    /// Creates `Bounds` of `size` at `(0, 0)`.
+    pub fn of(size: Size) -> Self {
         Self {
-            x: 0,
-            y: 0,
-            width,
-            height,
+            origin: Position::default(),
+            dim: size
         }
     }
 
-    // Consuming builder
-    pub fn at_origin(mut self, x: u16, y: u16) -> Self {
-        self.x = x;
-        self.y = y;
+    /// Consuming builder for origin `Position`
+    pub fn at_origin(mut self, origin: Position) -> Self {
+        self.origin = origin;
 
         self
     }
 
-    /// The index of the coordinate at (col, row) in the `Bounds` relative to itself.
+    /// Returns the index the `Position` is at `(col, row)` when flattened.
     pub fn index_of(&self, col: u16, row: u16) -> Result<usize> {
         ensure!(
-            col < self.width && row < self.height,
+            col < self.dim.width() && row < self.dim.height(),
             Error::OutOfBounds(col, row, self.clone())
         );
 
-        let idx = (row * self.width) + col;
+        let n = (row * self.dim.width()) + col;
 
-        Ok(idx as usize)
+        Ok(n as usize)
     }
 
-    /// An `Iterator` over each possible coordinate within the `Bounds` in form `(col, row)`
-    /// relative to itself.
-    pub fn iter_interior(&self) -> impl Iterator<Item = (u16, u16)> + '_ {
-        (0..self.height)
-            .flat_map(move |row| (0..self.width).map(move |col| (col, row)))
-    }
-
-    /// An `Iterator` over each possible coordinate of the `Bounds` relative to its
-    /// environment.
-    pub fn iter(&self) -> impl Iterator<Item = (u16, u16)> + '_ {
-        (self.y..self.y + self.height).flat_map(move |row| {
-            (self.x..self.x + self.width).map(move |col| (col, row))
-        })
+    /// Builds and returns an `Iterator` of all the `Position`s in the `Bounds` starting
+    /// from the `origin`.
+    pub fn iter(&self) -> impl Iterator<Item = Position> + '_ {
+        self.dim.iter().map(move |pos| pos + self.origin)
     }
 }
