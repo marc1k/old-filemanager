@@ -1,0 +1,19 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+
+Gnuplot not found, using plotters backend
+Benchmarking full draw
+Benchmarking full draw: Warming up for 3.0000 s
+
+Warning: Unable to complete 100 samples in 5.0s. You may wish to increase target time to 6.0s, enable flat sampling, or reduce sample count to 60.
+Benchmarking full draw: Collecting 100 samples in estimated 5.9600 s (5050 iterations)
+Benchmarking full draw: Analyzing
+full draw               time:   [1.1400 ms 1.1678 ms 1.1958 ms]
+                        change: [+0.6454% +6.1499% +11.685%] (p = 0.03 < 0.05)
+                        Change within noise threshold.
+Found 4 outliers among 100 measurements (4.00%)
+  3 (3.00%) low mild
+  1 (1.00%) high mild
+

@@ -9,3 +9,15 @@ repository = "https://github.com/marc1/opal/tree/master/crates/viewport"
 homepage = "https://github.com/marc1/opal/tree/master/crates/viewport"
 
 [dependencies]
+opal-macros = { path = "../macros" }
+
+[dependencies.crossterm]
+version = "0.18"
+features = ["event-stream"]
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "test_bench"
+harness = false

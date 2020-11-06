@@ -1,7 +1,4 @@
-use std::ops::{
-    Add, Sub,
-    Mul, Div
-};
+use std::ops::{Add, Sub, Mul, Div};
 
 /// A definition of a `(x, y)` or `(col, row)` point in 2D space.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -69,11 +66,13 @@ impl Div for Position {
 pub struct Size(pub u16, pub u16);
 
 impl Size {
-    /// Builds and returns an `Iterator` over possible arbitrary `Position`s inside this size constraint.
+    /// Builds and returns an `Iterator` over possible arbitrary `Position`s inside this size constraint,
+    /// going over columns first.
     pub fn iter(&self) -> impl Iterator<Item = Position> + '_ {
-        (0..self.1).flat_map(move |row| {
-            (0..self.0).map(move |col| Position(col, row))
-        })
+        (0..self.1)
+            .flat_map(move |row| 
+                (0..self.0).map(move |col| Position(col, row))
+            )
     }
 
     pub fn width(&self) -> u16 {
@@ -88,6 +87,12 @@ impl Size {
 impl Default for Size {
     fn default() -> Self {
         Self(1, 1)
+    }
+}
+
+impl From<(u16, u16)> for Size {
+    fn from(pair: (u16, u16)) -> Self {
+        Self(pair.0, pair.1)
     }
 }
 

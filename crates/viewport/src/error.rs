@@ -3,15 +3,6 @@ use {
     std::{error, fmt},
 };
 
-#[macro_export]
-macro_rules! ensure {
-    ($predicate:expr, $err:expr) => {
-        if !$predicate {
-            return Err($err);
-        }
-    };
-}
-
 #[derive(Debug)]
 pub enum Error {
     OutOfBounds(u16, u16, Bounds),

@@ -3,11 +3,13 @@ mod buffer;
 mod cell;
 mod error;
 mod util;
+mod viewport;
 
 pub use {
     bounds::Bounds,
     buffer::Buffer,
     cell::Cell,
-    error::{ Error, Result },
-    util::{ Position, Size },
+    error::{Error, Result},
+    util::{Position, Size},
+    crate::viewport::Viewport,
 };

@@ -1,8 +1,7 @@
-use crate::{ 
-    Result,
-    Error,
-    ensure,
-    Position, Size 
+use {
+    crate::{Result, Error, Position, Size},
+    std::borrow::Borrow,
+    opal_macros::ensure,
 };
 
 /// A definition of some area on the screen, with an origin `Position` and a `Size` (i.e.
@@ -10,7 +9,7 @@ use crate::{
 #[derive(Debug, Clone)]
 pub struct Bounds {
     pub origin: Position,
-    pub dim: Size
+    pub dim: Size,
 }
 
 impl Bounds {
@@ -18,7 +17,7 @@ impl Bounds {
     pub fn of(size: Size) -> Self {
         Self {
             origin: Position::default(),
-            dim: size
+            dim: size,
         }
     }
 
@@ -27,6 +26,20 @@ impl Bounds {
         self.origin = origin;
 
         self
+    }
+
+    pub fn contains<P: Borrow<Position>>(&self, pos: P) -> bool {
+        let pos = pos.borrow();
+
+        if pos.x() < self.origin.x() || pos.x() > self.dim.width() {
+            return false;
+        }
+
+        if pos.y() < self.origin.y() || pos.y() > self.dim.height() {
+            return false;
+        }
+
+        true
     }
 
     /// Returns the index the `Position` is at when flattened.
@@ -42,7 +55,7 @@ impl Bounds {
     }
 
     /// Builds and returns an `Iterator` of all the `Position`s in the `Bounds` starting
-    /// from the `origin`.
+    /// from the `origin`, traversing columns first.
     pub fn iter(&self) -> impl Iterator<Item = Position> + '_ {
         self.dim.iter().map(move |pos| pos + self.origin)
     }
