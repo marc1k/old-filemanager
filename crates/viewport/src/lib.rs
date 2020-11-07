@@ -1,15 +1,13 @@
-mod bounds;
-mod buffer;
-mod cell;
-mod error;
-mod util;
-mod viewport;
+mod display;
+mod space;
 
 pub use {
-    bounds::Bounds,
-    buffer::Buffer,
-    cell::Cell,
-    error::{Error, Result},
-    util::{Position, Size},
-    crate::viewport::Viewport,
+    display::{Cell},
+    space::{Bounds, Position, Size},
 };
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn bounds() {}
+}
