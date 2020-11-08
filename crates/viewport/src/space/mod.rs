@@ -1,7 +1,7 @@
 //! Spatial descriptors of the screen
 
-mod bounds;
 mod pos;
+mod region;
 mod size;
 
-pub use {bounds::Bounds, pos::Position, size::Size};
+pub use {region::Region, pos::Position, size::Size};

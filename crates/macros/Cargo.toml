@@ -1,0 +1,8 @@
+[package]
+name = "opal-macros"
+version = "0.0.0"
+authors = ["marc1 <m@marc.rs>"]
+edition = "2018"
+license = "MIT"
+repository = "https://github.com/marc1/opal/tree/master/crates/macros"
+homepage = "https://github.com/marc1/opal/tree/master/crates/macros"
