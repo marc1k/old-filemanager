@@ -1,6 +1,6 @@
 use {
     crate::space::{Region, Position, Size},
-    super::Cell,
+    super::{Cell, EMPTY_CELL},
     std::{
         borrow::Borrow,
         fmt::{
@@ -41,6 +41,12 @@ impl Buffer {
         Self::fill(cell, region)
     }
 
+    pub fn empty(region: Region) -> Self {
+        let cell = Cell::empty();
+        
+        Self::fill(cell, region)
+    }
+
     fn row(&self, y: u16) -> &[Cell] {
         let row = usize::from(y * self.region.width());
         &self.content[row .. row + self.region.width() as usize]
@@ -52,11 +58,17 @@ impl Buffer {
     }
 
     pub fn iter_relative(&self) -> impl Iterator<Item = (Position, &Cell)> {
-        self.region.iter_relative().zip(self.content.iter())
+        let non_empty = self.region.iter_relative().zip(self.content.iter())
+            .filter(|(_, cell)| **cell != *EMPTY_CELL);
+
+        non_empty
     }
 
     pub fn iter_absolute(&self) -> impl Iterator<Item = (Position, &Cell)> {
-        self.region.iter_absolute().zip(self.content.iter())
+        let non_empty = self.region.iter_absolute().zip(self.content.iter())
+            .filter(|(_, cell)| **cell != *EMPTY_CELL);
+
+        non_empty
     }
 }
 

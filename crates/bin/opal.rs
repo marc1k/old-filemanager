@@ -19,9 +19,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let diff = viewport - viewport_initial;
 
-
     println!("diff");
     println!("{:?}", diff);
+
+    for (p, c) in diff.iter_absolute() {
+        println!("{:?} {}", p, c);
+    }
 
     Ok(())
 }
