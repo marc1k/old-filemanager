@@ -135,3 +135,9 @@ impl Sub for Buffer {
     }
 }
 
+impl SubAssign for Buffer {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = (*self).clone() - rhs;
+    }
+}
+
