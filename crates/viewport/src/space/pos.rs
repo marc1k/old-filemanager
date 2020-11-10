@@ -1,10 +1,15 @@
-use std::ops::{Add, AddAssign, Sub, SubAssign};
+use std::ops::{
+    Add,
+    AddAssign,
+    Sub,
+    SubAssign
+};
 
 /// A point in 2D space.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Position {
     pub x: u16,
-    pub y: u16,
+    pub y: u16
 }
 
 /// Allow conversions from a `u16` pair.
@@ -12,7 +17,7 @@ impl From<(u16, u16)> for Position {
     fn from(pair: (u16, u16)) -> Position {
         Position {
             x: pair.0,
-            y: pair.1,
+            y: pair.1
         }
     }
 }
@@ -30,7 +35,7 @@ impl Add for Position {
     fn add(self, rhs: Self) -> Self::Output {
         Self::Output {
             x: self.x + rhs.x,
-            y: self.y + rhs.y,
+            y: self.y + rhs.y
         }
     }
 }
@@ -47,7 +52,7 @@ impl Sub for Position {
     fn sub(self, rhs: Self) -> Self::Output {
         Self::Output {
             x: self.x - rhs.x,
-            y: self.y - rhs.y,
+            y: self.y - rhs.y
         }
     }
 }

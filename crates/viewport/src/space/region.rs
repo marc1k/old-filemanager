@@ -1,19 +1,20 @@
-use {
-    super::{Position, Size},
+use super::{
+    Position,
+    Size
 };
 
 /// A positioned region in 2D space.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Region {
     pub origin: Position,
-    size: Size,
+    size: Size
 }
 
 impl Region {
     pub fn new(size: Size) -> Self {
         Self {
             origin: (0, 0).into(),
-            size,
+            size
         }
     }
 
@@ -26,7 +27,7 @@ impl Region {
     }
 
     pub fn area(&self) -> u32 {
-        u32::from(self.size.width * self.size.height) 
+        u32::from(self.size.width * self.size.height)
     }
 
     pub fn set_origin(&mut self, pos: Position) {
@@ -41,7 +42,7 @@ impl Region {
         if pos.y < self.origin.y || pos.y >= self.height() {
             return false;
         }
-        
+
         true
     }
 

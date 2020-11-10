@@ -1,9 +1,14 @@
 mod display;
 mod space;
 
-pub use {
-    display::{Buffer, Cell},
-    space::{Region, Position, Size},
+pub use display::{
+    Buffer,
+    Cell
+};
+pub use space::{
+    Position,
+    Region,
+    Size
 };
 
 #[cfg(test)]
@@ -30,7 +35,5 @@ mod tests {
     }
 
     #[test]
-    fn buf() {
-
-    }
+    fn buf() {}
 }

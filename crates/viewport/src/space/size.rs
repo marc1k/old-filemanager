@@ -1,10 +1,8 @@
-use std::ops::{Add, AddAssign, Sub, SubAssign};
-
 /// A positionless size in 2D space.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Size {
     pub width: u16,
-    pub height: u16,
+    pub height: u16
 }
 
 impl Size {
@@ -18,7 +16,7 @@ impl From<(u16, u16)> for Size {
     fn from(pair: (u16, u16)) -> Self {
         Self {
             width: pair.0,
-            height: pair.1,
+            height: pair.1
         }
     }
 }

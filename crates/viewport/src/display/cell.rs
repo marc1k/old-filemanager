@@ -1,9 +1,12 @@
-use {
-    std::fmt::{self, Display, Formatter},
-    lazy_static::lazy_static
+use lazy_static::lazy_static;
+use std::fmt::{
+    Display,
+    Formatter,
+    Result as FmtResult
 };
 
 lazy_static! {
+    /// A `Cell` sentinel that signifies the complete absence of data.
     pub static ref EMPTY_CELL: Cell = Cell::new("".to_string());
 }
 
@@ -11,7 +14,7 @@ lazy_static! {
 pub struct Cell {
     /// This is a `String`, not a `char` because some Unicode characters can take up
     /// more than one column of space.
-    symbol: String,
+    symbol: String
 }
 
 impl Cell {
@@ -19,8 +22,13 @@ impl Cell {
         Self { symbol }
     }
 
+    /// Constructs a clone of the "empty" `Cell` sentinel value.
     pub fn empty() -> Self {
         EMPTY_CELL.clone()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        *self == *EMPTY_CELL
     }
 }
 
@@ -32,7 +40,8 @@ impl Default for Cell {
 }
 
 impl Display for Cell {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+    /// The preferable way to access the `Cell`'s drawable data.
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
         write!(f, "{}", self.symbol)
     }
 }

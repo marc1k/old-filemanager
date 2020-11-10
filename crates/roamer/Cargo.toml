@@ -1,12 +1,10 @@
 [package]
 name = "roamer"
-version = "0.1.0"
+version = "0.0.0"
 authors = ["marc1 <m@marc.rs>"]
 edition = "2018"
 license = "MIT"
-repository = "https://github.com/marc1/opal/tree/master/crates/roamer"
-homepage = "https://github.com/marc1/opal/tree/master/crates/roamer"
+repository = "https://github.com/marc1/opal/tree/master/crates/viewport"
+homepage = "https://github.com/marc1/opal/tree/master/crates/viewport"
 
-[dependencies.tokio]
-version = 0.3
-features = ["full"] #amend later
+[dependencies]

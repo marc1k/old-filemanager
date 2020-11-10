@@ -4,4 +4,6 @@ mod pos;
 mod region;
 mod size;
 
-pub use {region::Region, pos::Position, size::Size};
+pub use pos::Position;
+pub use region::Region;
+pub use size::Size;
