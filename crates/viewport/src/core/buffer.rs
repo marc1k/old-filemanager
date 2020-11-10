@@ -40,7 +40,7 @@ impl Buffer {
 
     /// Creates a `Buffer` filled with space `Cell`s.
     ///
-    /// This is not to be confused with a *blank* `Buffer`.
+    /// This is not to be confused with an *empty* `Buffer`.
     /// Space `Cell`s are iterable, while empty `Cell`s are not.
     pub fn blank(region: Region) -> Self {
         let cell: Cell = Default::default();
@@ -70,8 +70,8 @@ impl Buffer {
         &mut self.content[row..row + self.region.width() as usize]
     }
 
-    /// Returns an `Iterator` over each `Position` in the `Region`, paired with the
-    /// respective `Cell`s at that point.
+    /// Returns an `Iterator` over each `Position` in the `Region`, paired with
+    /// the respective `Cell`s at that point.
     ///
     /// Each `Position` is relative to the origin of the `Buffer` itself,
     /// *not* the environment it was defined in.
@@ -79,11 +79,11 @@ impl Buffer {
         self.region
             .iter_relative()
             .zip(self.content.iter())
-            .filter(|(_, cell)| cell.is_empty())
+            .filter(|(_, cell)| !cell.is_empty())
     }
 
-    /// Returns an `Iterator` over each `Position` in the `Region`, paired with the
-    /// respective `Cell`s at that point.
+    /// Returns an `Iterator` over each `Position` in the `Region`, paired with
+    /// the respective `Cell`s at that point.
     ///
     /// Each `Position` is *absolute*. It is relative to the environment the
     /// `Buffer` was defined in.
@@ -91,7 +91,7 @@ impl Buffer {
         self.region
             .iter_absolute()
             .zip(self.content.iter())
-            .filter(|(_, cell)| cell.is_empty())
+            .filter(|(_, cell)| !cell.is_empty())
     }
 }
 
@@ -99,7 +99,7 @@ impl Debug for Buffer {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         for row in 0..self.region.height() {
             for col in 0..self.region.width() {
-                write!(f, "{}    ", self[&(col, row).into()])?;
+                write!(f, "{}    ", self[Position::of(col, row)])?;
             }
             write!(f, "\n\n")?;
         }
@@ -108,16 +108,26 @@ impl Debug for Buffer {
     }
 }
 
-impl Index<&Position> for Buffer {
+impl<P> Index<P> for Buffer
+where
+    P: Borrow<Position>
+{
     type Output = Cell;
 
-    fn index(&self, pos: &Position) -> &Self::Output {
+    fn index(&self, pos: P) -> &Self::Output {
+        let pos = pos.borrow();
+
         &self.row(pos.y)[pos.x as usize]
     }
 }
 
-impl IndexMut<&Position> for Buffer {
-    fn index_mut(&mut self, pos: &Position) -> &mut Self::Output {
+impl<P> IndexMut<P> for Buffer
+where
+    P: Borrow<Position>
+{
+    fn index_mut(&mut self, pos: P) -> &mut Self::Output {
+        let pos = pos.borrow();
+
         &mut self.row_mut(pos.y)[pos.x as usize]
     }
 }
@@ -128,8 +138,8 @@ impl Add for Buffer {
     /// A non-symmetrical overwrite operation.
     fn add(mut self, rhs: Self) -> Self::Output {
         for (pos, cell) in rhs.iter_absolute() {
-            if self.region.contains(&pos) {
-                self[&pos] = (*cell).clone();
+            if self.region.contains(pos) {
+                self[pos] = (*cell).clone();
             }
         }
 
@@ -139,7 +149,8 @@ impl Add for Buffer {
 
 impl AddAssign for Buffer {
     fn add_assign(&mut self, rhs: Self) {
-        // The clone is cheap because the original `self` is dropped right after assignment.
+        // The clone is cheap because the original `self` is dropped right
+        // after assignment.
         *self = (*self).clone() + rhs;
     }
 }
@@ -150,8 +161,8 @@ impl Sub for Buffer {
     /// A non-symmetrical subtraction operation.
     fn sub(mut self, rhs: Self) -> Self::Output {
         for (pos, cell) in rhs.iter_absolute() {
-            if self.region.contains(&pos) && self[&pos] == *cell {
-                self[&pos] = Cell::empty();
+            if self.region.contains(pos) && self[pos] == *cell {
+                self[pos] = Cell::empty();
             }
         }
 
@@ -161,7 +172,8 @@ impl Sub for Buffer {
 
 impl SubAssign for Buffer {
     fn sub_assign(&mut self, rhs: Self) {
-        // The clone is cheap because the original `self` is dropped right after assignment.
+        // The clone is cheap because the original `self` is dropped right
+        // after assignment.
         *self = (*self).clone() - rhs;
     }
 }

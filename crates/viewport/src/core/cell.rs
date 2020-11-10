@@ -6,14 +6,14 @@ use std::fmt::{
 };
 
 lazy_static! {
-    /// A `Cell` sentinel that signifies the complete absence of data.
-    pub static ref EMPTY_CELL: Cell = Cell::new("".to_string());
+    /// A `Cell` sentinel that signifies the absence of `Cell` data.
+    static ref EMPTY_CELL: Cell = Cell::new("".to_string());
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Cell {
-    /// This is a `String`, not a `char` because some Unicode characters can take up
-    /// more than one column of space.
+    /// This is a `String`, not a `char` because some Unicode characters can
+    /// take up more than one column of space.
     symbol: String
 }
 

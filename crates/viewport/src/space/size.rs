@@ -6,6 +6,10 @@ pub struct Size {
 }
 
 impl Size {
+    pub fn of(width: u16, height: u16) -> Self {
+        Self { width, height }
+    }
+
     pub fn area(&self) -> u32 {
         u32::from(self.width * self.height)
     }

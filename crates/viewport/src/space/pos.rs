@@ -12,6 +12,12 @@ pub struct Position {
     pub y: u16
 }
 
+impl Position {
+    pub fn of(x: u16, y: u16) -> Self {
+        Self { x, y }
+    }
+}
+
 /// Allow conversions from a `u16` pair.
 impl From<(u16, u16)> for Position {
     fn from(pair: (u16, u16)) -> Position {
