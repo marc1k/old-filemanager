@@ -17,3 +17,7 @@ members = ["crates/lib", "crates/viewport"]
 [dependencies]
 opal-lib = { path = "crates/lib" }
 
+[dependencies.crossterm]
+version = "0.18"
+features = ["event-stream"]
+
