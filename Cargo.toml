@@ -12,12 +12,7 @@ name = "opal"
 path = "crates/bin/opal.rs"
 
 [workspace]
-members = ["crates/lib", "crates/viewport"]
+members = ["crates/lib", "crates/aperture"]
 
 [dependencies]
 opal-lib = { path = "crates/lib" }
-
-[dependencies.crossterm]
-version = "0.18"
-features = ["event-stream"]
-

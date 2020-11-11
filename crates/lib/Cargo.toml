@@ -8,4 +8,4 @@ repository = "https://github.com/marc1/opal/tree/master/crates/lib"
 homepage = "https://github.com/marc1/opal/tree/master/crates/lib"
 
 [dependencies]
-viewport = { path = "../viewport" }
+aperture = { path = "../aperture" }
