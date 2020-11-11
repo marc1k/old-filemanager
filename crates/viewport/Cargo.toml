@@ -10,9 +10,4 @@ homepage = "https://github.com/marc1/opal/tree/master/crates/viewport"
 
 [dependencies]
 opal-macros = { path = "../macros" }
-lazy_static = "1.4.0"
-
-[dependencies.crossterm]
-version = "0.18"
-features = ["event-stream"]
 
